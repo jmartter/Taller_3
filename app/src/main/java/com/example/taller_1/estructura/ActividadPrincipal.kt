@@ -49,6 +49,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
     var name by remember { mutableStateOf("") }
     var greeting by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    var showDuplicateError by remember { mutableStateOf(false) }
     var namesAndColorsList by remember { mutableStateOf(listOf<Pair<String, Int>>()) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var itemToDelete by remember { mutableStateOf<Pair<String, Int>?>(null) }
@@ -62,7 +63,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             .background(backgroundColor)
             .padding(16.dp)
     ) {
-        if (greeting.isNotEmpty() && !showError) {
+        if (greeting.isNotEmpty() && !showError && !showDuplicateError) {
             Text(
                 text = greeting,
                 fontSize = 24.sp,
@@ -84,6 +85,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 onValueChange = {
                     name = it
                     showError = false
+                    showDuplicateError = false
                 },
                 label = { Text("Ingresa tu nombre") }
             )
@@ -102,7 +104,10 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                     val selectedColor = backgroundColor.toArgb()
                     val savedName = sharedPreferences.getString("saved_name", "")
                     if (!savedName.isNullOrEmpty()) {
-                        dbHelper.saveNameAndColor(savedName, selectedColor)
+                        val success = dbHelper.saveNameAndColor(savedName, selectedColor)
+                        if (!success) {
+                            showDuplicateError = true
+                        }
                     }
                 } else {
                     showError = true
@@ -153,6 +158,14 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 Text(
                     text = "Por favor, ingresa tu nombre antes de continuar.",
                     color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+            if (showDuplicateError) {
+                Text(
+                    text = "El nombre ya existe. Por favor, ingresa un nombre diferente.",
+                    color = Color.Red,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(top = 16.dp)
                 )

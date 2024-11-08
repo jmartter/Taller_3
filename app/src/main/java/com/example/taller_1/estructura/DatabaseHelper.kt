@@ -21,13 +21,30 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.delete(TABLE_NAME, "$COLUMN_NAME = ?", arrayOf(name))
     }
 
-    fun saveNameAndColor(name: String, color: Int) {
+    fun saveNameAndColor(name: String, color: Int): Boolean {
         val db = writableDatabase
+        val cursor = db.query(
+            TABLE_NAME,
+            arrayOf(COLUMN_NAME),
+            "$COLUMN_NAME = ?",
+            arrayOf(name),
+            null,
+            null,
+            null
+        )
+        val exists = cursor.count > 0
+        cursor.close()
+
+        if (exists) {
+            return false
+        }
+
         val contentValues = ContentValues().apply {
             put(COLUMN_NAME, name)
             put(COLUMN_COLOR, color)
         }
         db.insert(TABLE_NAME, null, contentValues)
+        return true
     }
 
     fun getAllNamesAndColors(): List<Pair<String, Int>> {
@@ -53,6 +70,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         cursor.close()
         return namesAndColors
     }
+
     fun updateColorByName(name: String, newColor: Int) {
         val db = writableDatabase
         val contentValues = ContentValues().apply {
@@ -60,8 +78,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
         db.update(TABLE_NAME, contentValues, "$COLUMN_NAME = ?", arrayOf(name))
     }
-
-
 
     companion object {
         private const val DATABASE_NAME = "user.db"
