@@ -89,22 +89,17 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             )
             Spacer(modifier = Modifier.height(25.dp))
             Button(onClick = {
-                val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                with(sharedPreferences.edit()) {
-                    putString("saved_name", name)
-                    apply()
-                }
-                greeting = "Hola, $name"
-                focusManager.clearFocus()
-            }) {
-                Text("Guardar nombre")
-            }
-            Spacer(modifier = Modifier.height(25.dp))
-            Button(onClick = {
                 if (name.isNotEmpty()) {
-                    // Ya no navegamos a la pantalla de configuración, solo actualizamos el color
-                    val selectedColor = backgroundColor.toArgb()
                     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                    with(sharedPreferences.edit()) {
+                        putString("saved_name", name)
+                        apply()
+                    }
+                    greeting = "Hola, $name"
+                    focusManager.clearFocus()
+
+                    // Guardar en SQLite
+                    val selectedColor = backgroundColor.toArgb()
                     val savedName = sharedPreferences.getString("saved_name", "")
                     if (!savedName.isNullOrEmpty()) {
                         dbHelper.saveNameAndColor(savedName, selectedColor)
@@ -113,7 +108,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                     showError = true
                 }
             }) {
-                Text("Guardar en SQLite")
+                Text("Guardar nombre y en SQLite")
             }
             Spacer(modifier = Modifier.height(25.dp))
             Button(onClick = {
@@ -205,7 +200,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun ActividadPrincipalScreenPreview() {
