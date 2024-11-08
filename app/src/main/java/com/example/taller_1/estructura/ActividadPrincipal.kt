@@ -118,6 +118,11 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             Spacer(modifier = Modifier.height(25.dp))
             Button(onClick = {
                 namesAndColorsList = dbHelper.getAllNamesAndColors()
+                val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                val savedName = sharedPreferences.getString("saved_name", "")
+                if (!savedName.isNullOrEmpty()) {
+                    greeting = "Hola, $savedName"
+                }
             }) {
                 Text("Cargar desde SQLite")
             }
@@ -203,6 +208,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                             val color = Color(it.second)
                             // Actualizar el color de fondo en la actividad
                             backgroundColor = color // Cambiar el color de fondo de la pantalla actual
+                            greeting = "Hola, ${it.first}"
                         }
                         showDeleteDialog = false
                     }) {
