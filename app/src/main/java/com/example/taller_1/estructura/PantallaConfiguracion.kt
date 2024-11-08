@@ -33,7 +33,7 @@ class PantallaConfiguracion : ComponentActivity() {
         setContent {
             Taller_1Theme {
                 PantallaConfiguracionScreen(Color(selectedColor)) { color ->
-                    val intent = Intent(this, PantallaInicio::class.java)
+                    val intent = Intent(this, ActividadPrincipal::class.java)
                     intent.putExtra("selectedColor", color)
                     startActivity(intent)
                 }
@@ -127,6 +127,7 @@ fun ColorCircle(color: Color, onClick: (Color) -> Unit) {
             }
     )
 }
+
 val colors = listOf(
     Color.Red,
     Color.Green,

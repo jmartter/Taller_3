@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import com.example.taller_1.ui.theme.Taller_1Theme
 
-// Mapa de colores y nombres
 val colorNames = mapOf(
     Color.Red to "Rojo",
     Color.Green to "Verde",
