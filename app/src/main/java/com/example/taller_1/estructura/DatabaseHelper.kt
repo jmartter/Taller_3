@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+// Clase para manejar la base de datos SQLite
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -16,11 +17,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         onCreate(db)
     }
 
+    // Función para eliminar un nombre y color de la base de datos
     fun deleteNameAndColor(name: String) {
         val db = writableDatabase
         db.delete(TABLE_NAME, "$COLUMN_NAME = ?", arrayOf(name))
     }
 
+    // Función para guardar un nombre y color en la base de datos
     fun saveNameAndColor(name: String, color: Int): Boolean {
         val db = writableDatabase
         val cursor = db.query(
@@ -47,6 +50,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return true
     }
 
+    // Función para obtener todos los nombres y colores de la base de datos
     fun getAllNamesAndColors(): List<Pair<String, Int>> {
         val db = readableDatabase
         val cursor = db.query(
@@ -71,6 +75,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return namesAndColors
     }
 
+    // Función para actualizar el color de un nombre en la base de datos
     fun updateColorByName(name: String, newColor: Int) {
         val db = writableDatabase
         val contentValues = ContentValues().apply {

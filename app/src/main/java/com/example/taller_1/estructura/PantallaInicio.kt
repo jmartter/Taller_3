@@ -23,12 +23,14 @@ import com.example.taller_1.R
 import com.example.taller_1.ui.theme.Taller_1Theme
 import java.util.Calendar
 
+// Clase principal de la pantalla de inicio
 class PantallaInicio : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val selectedColor = intent.getIntExtra("selectedColor", Color.White.toArgb())
         setContent {
             Taller_1Theme {
+                // Configura la pantalla de inicio con el color seleccionado
                 PantallaInicioScreen(Color(selectedColor)) {
                     val intent = Intent(this, ActividadPrincipal::class.java)
                     intent.putExtra("selectedColor", selectedColor)
@@ -40,6 +42,7 @@ class PantallaInicio : ComponentActivity() {
     }
 }
 
+// Función composable para la pantalla de inicio
 @Composable
 fun PantallaInicioScreen(backgroundColor: Color, onButtonClick: () -> Unit) {
     val (greeting, isDayTime) = getGreetingMessage()
@@ -51,6 +54,7 @@ fun PantallaInicioScreen(backgroundColor: Color, onButtonClick: () -> Unit) {
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Imagen de banner superior
         Image(
             painter = painterResource(id = if (isDayTime) R.drawable.day_banner else R.drawable.night_banner),
             contentDescription = null,
@@ -63,16 +67,19 @@ fun PantallaInicioScreen(backgroundColor: Color, onButtonClick: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Texto de saludo
             Text(
                 text = greeting,
                 fontWeight = FontWeight.Bold,
                 fontSize = 35.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
+            // Botón para navegar a la actividad principal
             Button(onClick = onButtonClick) {
                 Text(text = "Ir a la actividad principal")
             }
         }
+        // Imagen de banner inferior
         Image(
             painter = painterResource(id = if (isDayTime) R.drawable.day_banner else R.drawable.night_banner),
             contentDescription = null,
@@ -83,6 +90,7 @@ fun PantallaInicioScreen(backgroundColor: Color, onButtonClick: () -> Unit) {
     }
 }
 
+// Función para obtener el mensaje de saludo basado en la hora del día
 fun getGreetingMessage(): Pair<String, Boolean> {
     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
     val greeting = when (hour) {
@@ -94,6 +102,7 @@ fun getGreetingMessage(): Pair<String, Boolean> {
     return Pair(greeting, isDayTime)
 }
 
+// Vista previa de la pantalla de inicio
 @Preview(showBackground = true)
 @Composable
 fun PantallaInicioScreenPreview() {

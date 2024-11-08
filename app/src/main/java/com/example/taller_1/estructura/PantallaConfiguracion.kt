@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taller_1.ui.theme.Taller_1Theme
 
+// Clase principal de la pantalla de configuración
 class PantallaConfiguracion : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +43,7 @@ class PantallaConfiguracion : ComponentActivity() {
     }
 }
 
+// Función composable para la pantalla de configuración
 @Composable
 fun PantallaConfiguracionScreen(initialColor: Color, onInicioClick: (Int) -> Unit) {
     var selectedColor by remember { mutableStateOf(initialColor) }
@@ -99,6 +101,7 @@ fun PantallaConfiguracionScreen(initialColor: Color, onInicioClick: (Int) -> Uni
     }
 }
 
+// Función composable para el círculo de color
 @Composable
 fun ColorCircle(color: Color, onClick: (Color) -> Unit) {
     val context = LocalContext.current
@@ -128,6 +131,7 @@ fun ColorCircle(color: Color, onClick: (Color) -> Unit) {
     )
 }
 
+// Lista de colores disponibles
 val colors = listOf(
     Color.Red,
     Color.Green,
@@ -137,6 +141,7 @@ val colors = listOf(
     Color.Magenta
 )
 
+// Vista previa de la pantalla de configuración
 @Preview(showBackground = true)
 @Composable
 fun PantallaConfiguracionScreenPreview() {

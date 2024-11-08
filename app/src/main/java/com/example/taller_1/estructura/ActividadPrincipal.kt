@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import com.example.taller_1.ui.theme.Taller_1Theme
 
+// Mapa de colores con sus nombres
 val colorNames = mapOf(
     Color.Red to "Rojo",
     Color.Green to "Verde",
@@ -31,6 +32,7 @@ val colorNames = mapOf(
     Color.Magenta to "Magenta"
 )
 
+// Clase principal de la actividad
 class ActividadPrincipal : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +45,7 @@ class ActividadPrincipal : ComponentActivity() {
     }
 }
 
+// Función composable para la pantalla principal
 @Composable
 fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
     var backgroundColor by remember { mutableStateOf(initialBackgroundColor) } // Mantener el color de fondo actualizado
@@ -63,6 +66,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             .background(backgroundColor)
             .padding(16.dp)
     ) {
+        // Mostrar saludo si está disponible y no hay errores
         if (greeting.isNotEmpty() && !showError && !showDuplicateError) {
             Text(
                 text = greeting,
@@ -80,6 +84,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Campo de texto para ingresar el nombre
             TextField(
                 value = name,
                 onValueChange = {
@@ -90,6 +95,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 label = { Text("Ingresa tu nombre") }
             )
             Spacer(modifier = Modifier.height(25.dp))
+            // Botón para guardar el nombre y el color en SQLite
             Button(onClick = {
                 if (name.isNotEmpty()) {
                     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -116,6 +122,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 Text("Guardar nombre y en SQLite")
             }
             Spacer(modifier = Modifier.height(25.dp))
+            // Botón para cargar datos desde SQLite
             Button(onClick = {
                 namesAndColorsList = dbHelper.getAllNamesAndColors()
                 val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -127,6 +134,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 Text("Cargar desde SQLite")
             }
             Spacer(modifier = Modifier.height(25.dp))
+            // Botón para navegar a la pantalla de configuración
             Button(onClick = {
                 val intent = Intent(context, PantallaConfiguracion::class.java)
                 intent.putExtra("selectedColor", backgroundColor.toArgb())
@@ -135,7 +143,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 Text("Ir a Pantalla Configuración")
             }
             Spacer(modifier = Modifier.height(25.dp))
-            // Mostrar lista de nombres y colores con el nombre del color
+            // Mostrar lista de nombres y colores guardados en SQLite
             if (namesAndColorsList.isNotEmpty()) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     namesAndColorsList.forEach { item ->
@@ -159,6 +167,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                     }
                 }
             }
+            // Mostrar mensaje de error si no se ha ingresado un nombre
             if (showError) {
                 Text(
                     text = "Por favor, ingresa tu nombre antes de continuar.",
@@ -167,6 +176,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
+            // Mostrar mensaje de error si el nombre ya existe
             if (showDuplicateError) {
                 Text(
                     text = "El nombre ya existe. Por favor, ingresa un nombre diferente.",
@@ -177,7 +187,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             }
         }
 
-        // Dialogo de confirmación para borrar y cargar
+        // Diálogo de confirmación para borrar o cargar un nombre y color
         if (showDeleteDialog && itemToDelete != null) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
@@ -219,6 +229,8 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
         }
     }
 }
+
+// Vista previa de la pantalla principal
 @Preview(showBackground = true)
 @Composable
 fun ActividadPrincipalScreenPreview() {
