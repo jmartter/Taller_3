@@ -12,6 +12,7 @@ junitJupiter = "5.8.1"
 uiTestJunit4Android = "1.6.6"
 espressoIntents = "3.6.1"
 loader = "1.1.0"
+appcompat = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +33,7 @@ junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.r
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 androidx-espresso-intents = { group = "androidx.test.espresso", name = "espresso-intents", version.ref = "espressoIntents" }
 androidx-loader = { group = "androidx.loader", name = "loader", version.ref = "loader" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

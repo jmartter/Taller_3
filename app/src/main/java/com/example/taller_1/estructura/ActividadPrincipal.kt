@@ -6,10 +6,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +21,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import com.example.taller_1.ui.theme.Taller_1Theme
+
+// Mapa de colores y sus nombres
+val colorNames = mapOf(
+    Color.Red to "Rojo",
+    Color.Green to "Verde",
+    Color.Blue to "Azul",
+    Color.Yellow to "Amarillo",
+    Color.Cyan to "Cian",
+    Color.Magenta to "Magenta"
+)
 
 class ActividadPrincipal : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +53,9 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
     var name by remember { mutableStateOf("") }
     var greeting by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
-    var namesList by remember { mutableStateOf(listOf<String>()) }
+    var namesAndColorsList by remember { mutableStateOf(listOf<Pair<String, Int>>()) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var itemToDelete by remember { mutableStateOf<Pair<String, Int>?>(null) }
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val dbHelper = DatabaseHelper(context)
@@ -106,21 +117,42 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
             Button(onClick = {
                 val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                 val savedName = sharedPreferences.getString("saved_name", "")
+                val selectedColor = backgroundColor.toArgb()
                 if (!savedName.isNullOrEmpty()) {
-                    dbHelper.saveName(savedName)
+                    dbHelper.saveNameAndColor(savedName, selectedColor)
                 }
             }) {
                 Text("Guardar en SQLite")
             }
             Spacer(modifier = Modifier.height(25.dp))
             Button(onClick = {
-                namesList = dbHelper.getAllNames()
+                namesAndColorsList = dbHelper.getAllNamesAndColors()
             }) {
                 Text("Cargar desde SQLite")
             }
-            if (namesList.isNotEmpty()) {
-                namesList.forEach { savedName ->
-                    Text(text = savedName)
+            Spacer(modifier = Modifier.height(25.dp))
+            // Mostrar lista de nombres y colores con el nombre del color
+            if (namesAndColorsList.isNotEmpty()) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    namesAndColorsList.forEach { item ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .clickable {
+                                    itemToDelete = item
+                                    showDeleteDialog = true
+                                }
+                        ) {
+                            val color = Color(item.second)
+                            val colorName = colorNames[color] ?: "Desconocido"
+                            Text(
+                                text = "${item.first} - $colorName",
+                                modifier = Modifier.padding(8.dp),
+                                fontSize = 18.sp
+                            )
+                        }
+                    }
                 }
             }
             if (showError) {
@@ -131,6 +163,33 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
+        }
+
+        // Dialogo de confirmación para borrar
+        if (showDeleteDialog && itemToDelete != null) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Eliminar") },
+                text = { Text("¿Estás seguro de que deseas eliminar a ${itemToDelete?.first}?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            itemToDelete?.let {
+                                dbHelper.deleteNameAndColor(it.first) // Eliminar de SQLite
+                                namesAndColorsList = dbHelper.getAllNamesAndColors() // Actualizar lista
+                            }
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text("Eliminar")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteDialog = false }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
     }
 }

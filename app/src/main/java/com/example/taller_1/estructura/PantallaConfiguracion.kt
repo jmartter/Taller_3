@@ -1,4 +1,5 @@
 package com.example.taller_1.estructura
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -100,15 +101,32 @@ fun PantallaConfiguracionScreen(initialColor: Color, onInicioClick: (Int) -> Uni
 
 @Composable
 fun ColorCircle(color: Color, onClick: (Color) -> Unit) {
+    val context = LocalContext.current
+    val dbHelper = DatabaseHelper(context)
+    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val name = sharedPreferences.getString("saved_name", "Usuario") ?: "Usuario"
+
     Box(
         modifier = Modifier
             .size(100.dp)
             .background(color, shape = CircleShape)
             .border(2.dp, Color.Black, CircleShape)
-            .clickable { onClick(color) }
+            .clickable {
+                // Verificar si el usuario ya está en la base de datos
+                val userExists = dbHelper.getAllNamesAndColors().any { it.first == name }
+
+                if (userExists) {
+                    // Si existe, actualizar el color
+                    dbHelper.updateColorByName(name, color.toArgb())
+                } else {
+                    // Si no existe, guardar el nombre y el color
+                    dbHelper.saveNameAndColor(name, color.toArgb())
+                }
+
+                onClick(color)
+            }
     )
 }
-
 val colors = listOf(
     Color.Red,
     Color.Green,
