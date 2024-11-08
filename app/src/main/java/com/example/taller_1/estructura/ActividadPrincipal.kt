@@ -1,7 +1,6 @@
 package com.example.taller_1.estructura
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import com.example.taller_1.ui.theme.Taller_1Theme
 
-// Mapa de colores y sus nombres
+// Mapa de colores y nombres
 val colorNames = mapOf(
     Color.Red to "Rojo",
     Color.Green to "Verde",
@@ -38,18 +37,15 @@ class ActividadPrincipal : ComponentActivity() {
         val selectedColor = intent.getIntExtra("selectedColor", Color.White.toArgb())
         setContent {
             Taller_1Theme {
-                ActividadPrincipalScreen(Color(selectedColor)) {
-                    val intent = Intent(this, PantallaConfiguracion::class.java)
-                    intent.putExtra("selectedColor", selectedColor)
-                    startActivity(intent)
-                }
+                ActividadPrincipalScreen(Color(selectedColor))
             }
         }
     }
 }
 
 @Composable
-fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> Unit) {
+fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
+    var backgroundColor by remember { mutableStateOf(initialBackgroundColor) } // Mantener el color de fondo actualizado
     var name by remember { mutableStateOf("") }
     var greeting by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -106,20 +102,15 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
             Spacer(modifier = Modifier.height(25.dp))
             Button(onClick = {
                 if (name.isNotEmpty()) {
-                    onConfigButtonClick()
+                    // Ya no navegamos a la pantalla de configuración, solo actualizamos el color
+                    val selectedColor = backgroundColor.toArgb()
+                    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                    val savedName = sharedPreferences.getString("saved_name", "")
+                    if (!savedName.isNullOrEmpty()) {
+                        dbHelper.saveNameAndColor(savedName, selectedColor)
+                    }
                 } else {
                     showError = true
-                }
-            }) {
-                Text("Ir a la pantalla de configuración")
-            }
-            Spacer(modifier = Modifier.height(25.dp))
-            Button(onClick = {
-                val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-                val savedName = sharedPreferences.getString("saved_name", "")
-                val selectedColor = backgroundColor.toArgb()
-                if (!savedName.isNullOrEmpty()) {
-                    dbHelper.saveNameAndColor(savedName, selectedColor)
                 }
             }) {
                 Text("Guardar en SQLite")
@@ -165,12 +156,12 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
             }
         }
 
-        // Dialogo de confirmación para borrar
+        // Dialogo de confirmación para borrar y cargar
         if (showDeleteDialog && itemToDelete != null) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
-                title = { Text("Eliminar") },
-                text = { Text("¿Estás seguro de que deseas eliminar a ${itemToDelete?.first}?") },
+                title = { Text("Eliminar o Cargar") },
+                text = { Text("¿Estás seguro de que deseas eliminar a ${itemToDelete?.first}? O cargar el color?") },
                 confirmButton = {
                     TextButton(
                         onClick = {
@@ -185,8 +176,21 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { showDeleteDialog = false }) {
-                        Text("Cancelar")
+                    TextButton(onClick = {
+                        // Acción de cargar nombre y color
+                        itemToDelete?.let {
+                            val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                            with(sharedPreferences.edit()) {
+                                putString("saved_name", it.first)
+                                apply()
+                            }
+                            val color = Color(it.second)
+                            // Actualizar el color de fondo en la actividad
+                            backgroundColor = color // Cambiar el color de fondo de la pantalla actual
+                        }
+                        showDeleteDialog = false
+                    }) {
+                        Text("Cargar")
                     }
                 }
             )
@@ -198,6 +202,6 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
 @Composable
 fun ActividadPrincipalScreenPreview() {
     Taller_1Theme {
-        ActividadPrincipalScreen(Color.White) {}
+        ActividadPrincipalScreen(Color.White)
     }
 }
