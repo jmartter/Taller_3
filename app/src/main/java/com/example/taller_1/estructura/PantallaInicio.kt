@@ -85,8 +85,12 @@ fun PantallaInicioScreen(backgroundColor: Color, onButtonClick: () -> Unit) {
 
 fun getGreetingMessage(): Pair<String, Boolean> {
     val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    val greeting = when (hour) {
+        in 6..12 -> "Buenos días"
+        in 13..18 -> "Buenas tardes"
+        else -> "Buenas noches"
+    }
     val isDayTime = hour in 6..18
-    val greeting = if (isDayTime) "Buenos días" else "Buenas noches"
     return Pair(greeting, isDayTime)
 }
 
