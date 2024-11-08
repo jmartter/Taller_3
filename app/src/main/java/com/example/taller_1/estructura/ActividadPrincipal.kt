@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
@@ -45,7 +44,6 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
     var name by remember { mutableStateOf("") }
     var greeting by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
-    var progress by remember { mutableStateOf(0) }
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
@@ -102,25 +100,6 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
             }) {
                 Text("Ir a la pantalla de configuración")
             }
-            Spacer(modifier = Modifier.height(25.dp))
-            Button(onClick = {
-                val task = NetworkTask { newProgress ->
-                    progress = newProgress
-                }
-                task.execute()
-            }) {
-                Text("Iniciar Tarea de Red")
-            }
-            Spacer(modifier = Modifier.height(25.dp))
-            LinearProgressIndicator(
-                progress = progress / 100f,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = "Progreso: $progress%",
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 16.dp)
-            )
             if (showError) {
                 Text(
                     text = "Por favor, ingresa tu nombre antes de continuar.",
