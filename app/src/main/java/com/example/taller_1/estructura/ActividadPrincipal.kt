@@ -44,8 +44,10 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
     var name by remember { mutableStateOf("") }
     var greeting by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    var namesList by remember { mutableStateOf(listOf<String>()) }
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val dbHelper = DatabaseHelper(context)
 
     Box(
         modifier = Modifier
@@ -99,6 +101,27 @@ fun ActividadPrincipalScreen(backgroundColor: Color, onConfigButtonClick: () -> 
                 }
             }) {
                 Text("Ir a la pantalla de configuración")
+            }
+            Spacer(modifier = Modifier.height(25.dp))
+            Button(onClick = {
+                val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                val savedName = sharedPreferences.getString("saved_name", "")
+                if (!savedName.isNullOrEmpty()) {
+                    dbHelper.saveName(savedName)
+                }
+            }) {
+                Text("Guardar en SQLite")
+            }
+            Spacer(modifier = Modifier.height(25.dp))
+            Button(onClick = {
+                namesList = dbHelper.getAllNames()
+            }) {
+                Text("Cargar desde SQLite")
+            }
+            if (namesList.isNotEmpty()) {
+                namesList.forEach { savedName ->
+                    Text(text = savedName)
+                }
             }
             if (showError) {
                 Text(
