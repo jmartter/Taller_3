@@ -1,6 +1,7 @@
 package com.example.taller_1.estructura
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -120,6 +121,14 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 namesAndColorsList = dbHelper.getAllNamesAndColors()
             }) {
                 Text("Cargar desde SQLite")
+            }
+            Spacer(modifier = Modifier.height(25.dp))
+            Button(onClick = {
+                val intent = Intent(context, PantallaConfiguracion::class.java)
+                intent.putExtra("selectedColor", backgroundColor.toArgb())
+                context.startActivity(intent)
+            }) {
+                Text("Ir a Pantalla Configuración")
             }
             Spacer(modifier = Modifier.height(25.dp))
             // Mostrar lista de nombres y colores con el nombre del color
