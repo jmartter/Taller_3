@@ -1,8 +1,8 @@
-# Proyecto Taller 2
+# Proyecto Taller 3
 
 ## Enlace al Repositorio
 
-[Repositorio en GitHub](https://github.com/jmartter/Taller_2.git)
+[Repositorio en GitHub](https://github.com/jmartter/Taller_3.git)
 
 Este proyecto es una aplicación de Android, la aplicación está compuesta por tres pantallas diferentes: `PantallaInicio`, `ActividadPrincipal` y `PantallaConfiguracion`.
 
