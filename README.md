@@ -6,12 +6,6 @@
 
 Este proyecto es una aplicación de Android, la aplicación está compuesta por tres pantallas diferentes: `PantallaInicio`, `ActividadPrincipal` y `PantallaConfiguracion`.
 
-## Ubicación del Código
-
-El código de este proyecto se encuentra en la siguiente ruta:
-
-`/Taller_2/src/main/java/com/example/taller_1/estructura/`
-
 ## Componentes Principales
 
 ### `PantallaInicio.kt`
