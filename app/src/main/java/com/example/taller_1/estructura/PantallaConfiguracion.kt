@@ -1,4 +1,5 @@
 package com.example.taller_1.estructura
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taller_1.ui.theme.Taller_1Theme
 
+// Clase principal de la pantalla de configuración
 class PantallaConfiguracion : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +34,7 @@ class PantallaConfiguracion : ComponentActivity() {
         setContent {
             Taller_1Theme {
                 PantallaConfiguracionScreen(Color(selectedColor)) { color ->
-                    val intent = Intent(this, PantallaInicio::class.java)
+                    val intent = Intent(this, ActividadPrincipal::class.java)
                     intent.putExtra("selectedColor", color)
                     startActivity(intent)
                 }
@@ -41,6 +43,7 @@ class PantallaConfiguracion : ComponentActivity() {
     }
 }
 
+// Función composable para la pantalla de configuración
 @Composable
 fun PantallaConfiguracionScreen(initialColor: Color, onInicioClick: (Int) -> Unit) {
     var selectedColor by remember { mutableStateOf(initialColor) }
@@ -98,17 +101,37 @@ fun PantallaConfiguracionScreen(initialColor: Color, onInicioClick: (Int) -> Uni
     }
 }
 
+// Función composable para el círculo de color
 @Composable
 fun ColorCircle(color: Color, onClick: (Color) -> Unit) {
+    val context = LocalContext.current
+    val dbHelper = DatabaseHelper(context)
+    val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val name = sharedPreferences.getString("saved_name", "Usuario") ?: "Usuario"
+
     Box(
         modifier = Modifier
             .size(100.dp)
             .background(color, shape = CircleShape)
             .border(2.dp, Color.Black, CircleShape)
-            .clickable { onClick(color) }
+            .clickable {
+                // Verificar si el usuario ya está en la base de datos
+                val userExists = dbHelper.getAllNamesAndColors().any { it.first == name }
+
+                if (userExists) {
+                    // Si existe, actualizar el color
+                    dbHelper.updateColorByName(name, color.toArgb())
+                } else {
+                    // Si no existe, guardar el nombre y el color
+                    dbHelper.saveNameAndColor(name, color.toArgb())
+                }
+
+                onClick(color)
+            }
     )
 }
 
+// Lista de colores disponibles
 val colors = listOf(
     Color.Red,
     Color.Green,
@@ -118,6 +141,7 @@ val colors = listOf(
     Color.Magenta
 )
 
+// Vista previa de la pantalla de configuración
 @Preview(showBackground = true)
 @Composable
 fun PantallaConfiguracionScreenPreview() {
