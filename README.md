@@ -6,7 +6,7 @@
 
 Este proyecto es una aplicación de Android, la aplicación está compuesta por tres pantallas diferentes: `PantallaInicio`, `ActividadPrincipal` y `PantallaConfiguracion`.
 
-## Ubicación del Código 
+## Ubicación del Código
 
 El código de este proyecto se encuentra en la siguiente ruta:
 
@@ -30,10 +30,6 @@ El código de este proyecto se encuentra en la siguiente ruta:
 3. **Función `PantallaInicioScreenPreview`**:
    - Es una función composable que proporciona una vista previa de la pantalla de inicio en el editor.
 
-Muestra de la pantalla de inicio:
-
-| <img src="screenshots/InicioDia.png" alt="PantallaInicioDia" width="300"/> | <img src="screenshots/InicioNoche.png" alt="PantallaInicioNoche" width="300"/> |
-
 ### `ActividadPrincipal.kt`
 
 1. **Clase `ActividadPrincipal`**:
@@ -43,18 +39,16 @@ Muestra de la pantalla de inicio:
 
 2. **Función `ActividadPrincipalScreen`**:
    - Es una función composable que define la UI de la pantalla principal.
-   - Usa `remember` para mantener el estado del nombre y el saludo.
+   - Usa `remember` para mantener el estado del nombre, el saludo y otros estados.
    - Usa `TextField` para ingresar el nombre.
-   - Usa `Button` para guardar el nombre en `SharedPreferences` y actualizar el saludo.
+   - Usa `Button` para guardar el nombre en `SharedPreferences` y en SQLite, y actualizar el saludo.
+   - Usa `Button` para cargar nombres y colores desde SQLite.
    - Usa `Button` para navegar a la pantalla de configuración.
-   - Usa `Button` para iniciar una tarea de red simulada y mostrar el progreso.
+   - Usa `LazyColumn` para mostrar una lista de nombres y colores guardados.
+   - Usa `AlertDialog` para confirmar la eliminación o carga de un nombre y color.
 
 3. **Función `ActividadPrincipalScreenPreview`**:
    - Es una función composable que proporciona una vista previa de la pantalla principal en el editor.
-
-Muestra de la pantalla de Actividad Principal:
-
-<img src="screenshots/Actividad.png" alt="PantallaActividadPrincipal" width="300"/>
 
 ### `PantallaConfiguracion.kt`
 
@@ -74,33 +68,14 @@ Muestra de la pantalla de Actividad Principal:
 3. **Función `ColorCircle`**:
    - Es una función composable que define un círculo de color clicable.
    - Usa `Box` para crear un círculo con un borde y un color de fondo.
+   - Guarda o actualiza el color seleccionado en SQLite.
 
 4. **Función `PantallaConfiguracionScreenPreview`**:
    - Es una función composable que proporciona una vista previa de la pantalla de configuración en el editor.
 
-Muestra de la pantalla de Configuración:
+### `DatabaseHelper.kt`
 
-<img src="screenshots/Configuracion.png" alt="PantallaConfiguracion" width="300"/>
-
-### Incorporaciones Recientes
-
-1. **Uso de `AsyncTask` y `AsyncTaskLoader` en `MainActivity`**:
-   - Se ha añadido el uso de `AsyncTask` (`LoadMenuTask`) para cargar menús en segundo plano.
-   - Se ha añadido el uso de `AsyncTaskLoader` (`MenuLoader`) para cargar menús en segundo plano.
-
-2. **Clase `LoadMenuTask`**:
-   - Es una subclase de `AsyncTask` que simula la carga de menús en segundo plano.
-
-3. **Clase `MenuLoader`**:
-   - Es una subclase de `AsyncTaskLoader` que simula la carga de menús en segundo plano.
-
-4. **Clase `NetworkTask`**:
-   - Es una subclase de `AsyncTask` que simula una tarea de red y actualiza el progreso.
-
-Estas incorporaciones permiten cargar datos en segundo plano y mejorar la experiencia del usuario al no bloquear la interfaz de usuario principal.
-
-### Nueva Imagen
-
-Muestra de la pantalla de descarga:
-
-<img src="screenshots/PantallaDeCarga.png" alt="PantallaDeCarga" width="300"/>
+1. **Clase `DatabaseHelper`**:
+   - Es una subclase de `SQLiteOpenHelper`.
+   - Maneja la creación y actualización de la base de datos SQLite.
+   - Proporciona funciones para guardar, eliminar, actualizar y obtener nombres y colores.
