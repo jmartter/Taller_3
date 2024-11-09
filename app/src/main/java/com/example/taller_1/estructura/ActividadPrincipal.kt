@@ -29,7 +29,8 @@ val colorNames = mapOf(
     Color.Blue to "Azul",
     Color.Yellow to "Amarillo",
     Color.Cyan to "Cian",
-    Color.Magenta to "Magenta"
+    Color.Magenta to "Magenta",
+    Color.White to "Blanco"
 )
 
 // Clase principal de la actividad
