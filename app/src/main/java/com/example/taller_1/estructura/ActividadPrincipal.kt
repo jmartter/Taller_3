@@ -8,6 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,7 +51,7 @@ class ActividadPrincipal : ComponentActivity() {
 // Función composable para la pantalla principal
 @Composable
 fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
-    var backgroundColor by remember { mutableStateOf(initialBackgroundColor) } // Mantener el color de fondo actualizado
+    var backgroundColor by remember { mutableStateOf(initialBackgroundColor) }
     var name by remember { mutableStateOf("") }
     var greeting by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
@@ -67,7 +69,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             .background(backgroundColor)
             .padding(16.dp)
     ) {
-        // Mostrar saludo si está disponible y no hay errores
         if (greeting.isNotEmpty() && !showError && !showDuplicateError) {
             Text(
                 text = greeting,
@@ -85,7 +86,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Campo de texto para ingresar el nombre
             TextField(
                 value = name,
                 onValueChange = {
@@ -96,7 +96,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 label = { Text("Ingresa tu nombre") }
             )
             Spacer(modifier = Modifier.height(25.dp))
-            // Botón para guardar el nombre y el color en SQLite
             Button(onClick = {
                 if (name.isNotEmpty()) {
                     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -107,7 +106,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                     greeting = "Hola, $name"
                     focusManager.clearFocus()
 
-                    // Guardar en SQLite
                     val selectedColor = backgroundColor.toArgb()
                     val savedName = sharedPreferences.getString("saved_name", "")
                     if (!savedName.isNullOrEmpty()) {
@@ -123,7 +121,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 Text("Guardar nombre y en SQLite")
             }
             Spacer(modifier = Modifier.height(25.dp))
-            // Botón para cargar datos desde SQLite
             Button(onClick = {
                 namesAndColorsList = dbHelper.getAllNamesAndColors()
                 val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -135,7 +132,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 Text("Cargar desde SQLite")
             }
             Spacer(modifier = Modifier.height(25.dp))
-            // Botón para navegar a la pantalla de configuración
             Button(onClick = {
                 val intent = Intent(context, PantallaConfiguracion::class.java)
                 intent.putExtra("selectedColor", backgroundColor.toArgb())
@@ -144,10 +140,15 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 Text("Ir a Pantalla Configuración")
             }
             Spacer(modifier = Modifier.height(25.dp))
-            // Mostrar lista de nombres y colores guardados en SQLite
-            if (namesAndColorsList.isNotEmpty()) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    namesAndColorsList.forEach { item ->
+
+            // Box con altura fija para la lista desplazable
+            Box(
+                modifier = Modifier
+                    .height(200.dp) // Fijar la altura de la lista
+                    .fillMaxWidth()
+            ) {
+                LazyColumn {
+                    items(namesAndColorsList) { item ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -168,7 +169,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                     }
                 }
             }
-            // Mostrar mensaje de error si no se ha ingresado un nombre
+
             if (showError) {
                 Text(
                     text = "Por favor, ingresa tu nombre antes de continuar.",
@@ -177,7 +178,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                     modifier = Modifier.padding(top = 16.dp)
                 )
             }
-            // Mostrar mensaje de error si el nombre ya existe
             if (showDuplicateError) {
                 Text(
                     text = "El nombre ya existe. Por favor, ingresa un nombre diferente.",
@@ -188,7 +188,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
             }
         }
 
-        // Diálogo de confirmación para borrar o cargar un nombre y color
         if (showDeleteDialog && itemToDelete != null) {
             AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
@@ -198,8 +197,8 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                     TextButton(
                         onClick = {
                             itemToDelete?.let {
-                                dbHelper.deleteNameAndColor(it.first) // Eliminar de SQLite
-                                namesAndColorsList = dbHelper.getAllNamesAndColors() // Actualizar lista
+                                dbHelper.deleteNameAndColor(it.first)
+                                namesAndColorsList = dbHelper.getAllNamesAndColors()
                             }
                             showDeleteDialog = false
                         }
@@ -209,7 +208,6 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                 },
                 dismissButton = {
                     TextButton(onClick = {
-                        // Acción de cargar nombre y color
                         itemToDelete?.let {
                             val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                             with(sharedPreferences.edit()) {
@@ -217,8 +215,7 @@ fun ActividadPrincipalScreen(initialBackgroundColor: Color) {
                                 apply()
                             }
                             val color = Color(it.second)
-                            // Actualizar el color de fondo en la actividad
-                            backgroundColor = color // Cambiar el color de fondo de la pantalla actual
+                            backgroundColor = color
                             greeting = "Hola, ${it.first}"
                         }
                         showDeleteDialog = false
